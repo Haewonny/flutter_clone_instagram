@@ -15,65 +15,73 @@ class App extends GetView<BottomNavController> {
     return WillPopScope(
       onWillPop: controller.willPopAction,
       child: Obx(
-            () => Scaffold(
-          // backgroundColor: Colors.lightBlueAccent,
-          body: IndexedStack(
-            index: controller.pageIndex.value,
-            children: [
-              const Home(),
-              const Search(),
-              Container(
-                child: Center(child: Text('UPLOAD')),
+            () =>
+            Scaffold(
+              // backgroundColor: Colors.lightBlueAccent,
+              body: IndexedStack(
+                index: controller.pageIndex.value,
+                children: [
+                  const Home(),
+                  Navigator(
+                    key: controller.searchPageNavigationKey,
+                    onGenerateRoute: (routeSetting) {
+                      return MaterialPageRoute(
+                        builder: (context) => const Search(),
+                      );
+                    },
+                  ),
+                  Container(
+                    child: Center(child: Text('UPLOAD')),
+                  ),
+                  Container(
+                    child: Center(child: Text('ACTIVITY')),
+                  ),
+                  Container(
+                    child: Center(child: Text('MYPAGE')),
+                  ),
+                ],
               ),
-              Container(
-                child: Center(child: Text('ACTIVITY')),
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                currentIndex: controller.pageIndex.value,
+                // 현재 활성화 된 거 컨트롤러로 받아옴
+                elevation: 0,
+                // 음영 지우기
+                onTap: controller.changeBottomNav,
+                items: [
+                  BottomNavigationBarItem(
+                    icon: ImageData(IconsPath.homeOff),
+                    activeIcon: ImageData(IconsPath.homeOn),
+                    label: 'home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageData(IconsPath.searchOff),
+                    activeIcon: ImageData(IconsPath.searchOn),
+                    label: 'home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageData(IconsPath.uploadIcon),
+                    label: 'home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: ImageData(IconsPath.activeOff),
+                    activeIcon: ImageData(IconsPath.activeOn),
+                    label: 'home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.grey),
+                    ),
+                    label: 'home',
+                  ),
+                ],
               ),
-              Container(
-                child: Center(child: Text('MYPAGE')),
-              ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            currentIndex: controller.pageIndex.value,
-            // 현재 활성화 된 거 컨트롤러로 받아옴
-            elevation: 0,
-            // 음영 지우기
-            onTap: controller.changeBottomNav,
-            items: [
-              BottomNavigationBarItem(
-                icon: ImageData(IconsPath.homeOff),
-                activeIcon: ImageData(IconsPath.homeOn),
-                label: 'home',
-              ),
-              BottomNavigationBarItem(
-                icon: ImageData(IconsPath.searchOff),
-                activeIcon: ImageData(IconsPath.searchOn),
-                label: 'home',
-              ),
-              BottomNavigationBarItem(
-                icon: ImageData(IconsPath.uploadIcon),
-                label: 'home',
-              ),
-              BottomNavigationBarItem(
-                icon: ImageData(IconsPath.activeOff),
-                activeIcon: ImageData(IconsPath.activeOn),
-                label: 'home',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.grey),
-                ),
-                label: 'home',
-              ),
-            ],
-          ),
-        ),
+            ),
       ),
     );
   }
