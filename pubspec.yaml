@@ -44,6 +44,7 @@ dependencies:
   firebase_auth: ^4.15.3
   google_sign_in: ^6.1.6
   flutterfire_cli: ^0.2.7
+  cloud_firestore: ^4.13.6
 
 dev_dependencies:
   flutter_test:
