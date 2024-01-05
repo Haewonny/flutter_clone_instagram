@@ -19,11 +19,11 @@ class UploadDescription extends GetView<UploadController> {
               fit: BoxFit.cover,
             ),
           ),
-          const Expanded(
-            // 필터사진 제외 나머지 영역
+          Expanded( // 필터사진 제외 나머지 영역
             child: TextField(
+              controller: controller.textEditingController,
               maxLines: null,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -110,14 +110,14 @@ class UploadDescription extends GetView<UploadController> {
               width: 50,
             ),
           ),
-        ), 
+        ),
         title: const Text(
           '새 게시물',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: controller.uploadPost,
             child: Padding(
               padding: EdgeInsets.all(15.0),
               child: ImageData(
@@ -135,9 +135,7 @@ class UploadDescription extends GetView<UploadController> {
           bottom: 0,
           top: 0,
           child: GestureDetector(
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
+            onTap: controller.unfocusKeyboard,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

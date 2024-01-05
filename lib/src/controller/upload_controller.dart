@@ -1,8 +1,15 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clone_instagram/src/components/message_popup.dart';
+import 'package:flutter_clone_instagram/src/controller/auth_controller.dart';
+import 'package:flutter_clone_instagram/src/models/post.dart';
 import 'package:flutter_clone_instagram/src/pages/upload/upload_description.dart';
+import 'package:flutter_clone_instagram/src/repository/post_repository.dart';
+import 'package:flutter_clone_instagram/src/utils/data_util.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as imageLib;
@@ -12,16 +19,20 @@ import 'package:photofilters/widgets/photo_filter.dart';
 class UploadController extends GetxController {
   var albums = <AssetPathEntity>[];
   RxList<AssetEntity> imageList = <AssetEntity>[].obs;
-
   RxString headerTitle = ''.obs;
+
+  TextEditingController textEditingController = TextEditingController();
+
   Rx<AssetEntity> selectedImage =
       AssetEntity(id: '0', typeInt: 0, width: 0, height: 0).obs;
 
   File? filteredImage;
+  Post? post;
 
   @override
   void onInit() {
     super.onInit();
+    post = Post.init(AuthController.to.user.value);
     _loadPhotos();
   }
 
@@ -76,7 +87,10 @@ class UploadController extends GetxController {
       Get.context!,
       MaterialPageRoute(
         builder: (context) => PhotoFilterSelector(
-          title: const Text("필터 추가하기", style: TextStyle(fontSize: 20),),
+          title: const Text(
+            "필터 추가하기",
+            style: TextStyle(fontSize: 20),
+          ),
           image: image!,
           filters: presetFiltersList,
           filename: fileName,
@@ -91,5 +105,55 @@ class UploadController extends GetxController {
         () => UploadDescription(),
       );
     }
+  }
+
+  void unfocusKeyboard() {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void uploadPost() {
+    unfocusKeyboard();
+    var filename = DataUtil.makeFilePath();
+    var task = uploadFile(
+        filteredImage!, '${AuthController.to.user.value.uid}/$filename');
+    if (task != null) {
+      task.snapshotEvents.listen(
+        (event) async {
+          if (event.bytesTransferred == event.totalBytes &&
+              event.state == TaskState.success) {
+            var downloadUrl = await event.ref.getDownloadURL();
+            var updatedPost = post!.copyWith(
+              thumbnail: downloadUrl,
+              description: textEditingController.text,
+            );
+            _submitPost(updatedPost);
+          }
+        },
+      );
+    }
+  }
+
+  UploadTask uploadFile(File file, String filename) {
+    var ref = FirebaseStorage.instance.ref().child('instagram').child(filename);
+
+    final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {'picked-file-path': file.path});
+
+    return ref.putFile(file, metadata);
+  }
+
+  void _submitPost(Post postData) async {
+    await PostRepository.updatePost(postData);
+    showDialog(
+      context: Get.context!,
+      builder: (context) => MessagePopup(
+        title: '포스트',
+        message: '포스팅이 완료되었습니다.',
+        okCallback: () {
+          Get.until((route) => Get.currentRoute == '/');
+        },
+      ),
+    );
   }
 }
