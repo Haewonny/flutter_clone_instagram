@@ -1,8 +1,9 @@
- import 'package:flutter_clone_instagram/src/controller/bottom_nav_controller.dart';
+import 'package:flutter_clone_instagram/src/controller/bottom_nav_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
 
 import '../controller/auth_controller.dart';
+import '../controller/mypage_controller.dart';
 
 class InitBinding extends Bindings {
   @override
@@ -11,4 +12,7 @@ class InitBinding extends Bindings {
     Get.put(AuthController(), permanent: true);
   }
 
+  static additionalBinding() {
+    Get.put(MypageController(), permanent: true);
+  }
 }

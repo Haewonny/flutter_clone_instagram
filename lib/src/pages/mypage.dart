@@ -2,22 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clone_instagram/src/components/avatar_widget.dart';
 import 'package:flutter_clone_instagram/src/components/image_data.dart';
 import 'package:flutter_clone_instagram/src/components/user_card.dart';
+import 'package:flutter_clone_instagram/src/controller/auth_controller.dart';
+import 'package:flutter_clone_instagram/src/controller/mypage_controller.dart';
+import 'package:get/get.dart';
 
-class MyPage extends StatefulWidget {
+class MyPage extends GetView<MypageController> {
   const MyPage({super.key});
-
-  @override
-  State<MyPage> createState() => _MyPageState();
-}
-
-class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
-  late TabController tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 2, vsync: this);
-  }
 
   Widget _statisticsOne(String title, int value) {
     return Column(
@@ -42,52 +32,46 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
   Widget _information() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              AvatarWidget(
-                type: AvatarType.TYPE3,
-                thumbPath: 'https://picpac.kr/common/img/default_profile.png',
-                size: 80,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(child: _statisticsOne('Posts', 15)),
-                    Expanded(child: _statisticsOne('Followers', 180)),
-                    Expanded(child: _statisticsOne('Following', 180)),
-                  ],
+      child: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                AvatarWidget(
+                  type: AvatarType.TYPE3,
+                  thumbPath: controller.targetUser.value.thumbnail!,
+                  size: 80,
                 ),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(
-            '해원',
-            style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          const SizedBox(
-            height: 3,
-          ),
-          const Text(
-            '@ewha.w.univ',
-            style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff013870)),
-          )
-        ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(child: _statisticsOne('Posts', 15)),
+                      Expanded(child: _statisticsOne('Followers', 180)),
+                      Expanded(child: _statisticsOne('Following', 180)),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              controller.targetUser.value.description!,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            )
+          ],
+        ),
       ),
     );
   }
-
+ 
   Widget _menu() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25),
@@ -173,7 +157,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
 
   Widget _tabMenu() {
     return TabBar(
-      controller: tabController,
+      controller: controller.tabController,
       indicatorColor: Colors.black,
       indicatorWeight: 1,
       tabs: [
@@ -213,12 +197,14 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'haewonny',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.black,
+        title: Obx(
+          () => Text(
+            controller.targetUser.value.nickname!,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black,
+            ),
           ),
         ),
         actions: [

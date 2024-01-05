@@ -21,7 +21,22 @@ class IUser {
       'uid': uid,
       'nickname': nickname,
       'thumbnail': thumbnail,
-       'description': description,
+      'description': description,
     };
+  }
+
+  IUser copyWith({ // 복제
+    String? uid,
+    String? nickname,
+    String? thumbnail,
+    String? description,
+  }) {
+    // null 이면 기존 data 넣어줌
+    return IUser(
+      uid: uid ?? this.uid,
+      nickname: nickname ?? this.nickname,
+      thumbnail: thumbnail ?? this.thumbnail,
+      description: description ?? this.description,
+    );
   }
 }
