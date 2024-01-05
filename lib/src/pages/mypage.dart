@@ -71,7 +71,7 @@ class MyPage extends GetView<MypageController> {
       ),
     );
   }
- 
+
   Widget _menu() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25),

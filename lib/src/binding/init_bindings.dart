@@ -1,4 +1,5 @@
 import 'package:flutter_clone_instagram/src/controller/bottom_nav_controller.dart';
+import 'package:flutter_clone_instagram/src/controller/upload_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
 
